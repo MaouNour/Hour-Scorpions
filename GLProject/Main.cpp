@@ -50,13 +50,13 @@ void processInput(GLFWwindow *window)
 	}
 }
 
-
 int main()
 {
 	glfwInit();
 	GLFWwindow* window = glfwCreateWindow(width, height, "Lecture 3", NULL, NULL);
 	glfwMakeContextCurrent(window);
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+	std::cout << "hello";
 
 	glEnable(GL_DEPTH_TEST);
 
