@@ -9,7 +9,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
-#include "Polygon.cpp"
+#include "MyPoly.cpp"
+//#include "Polygon.cpp"
 #include <math.h>
 
 using namespace glm;
@@ -49,7 +50,6 @@ void processInput(GLFWwindow *window)
 		cameraFront = vec3(rotatedVectorHomogeneous);
 	}
 }
-
 
 int main()
 {
@@ -214,14 +214,15 @@ int main()
 		Polygon1.transformation(transformation);
 		Polygon1.draw(ourShader);
 
+		float speed = 0.5f;
 		transformation = mat4(1.0f);
-		transformation = rotate(transformation, cos((float)glfwGetTime())/2, vec3(0.0f, 0.0f, 1.0f));
+		transformation = rotate(transformation, cos((float)glfwGetTime())/2, vec3(0.0f, 0.0f, 1.0f*speed));
 		transformation = translate(transformation, vec3(0.0f, -0.5f, 0.0f));
 		Polygon2.transformation(transformation);
 		Polygon2.draw(ourShader);
 
 		transformation = mat4(1.0f);
-		transformation = rotate(transformation, cos((float)glfwGetTime())/2, vec3(0.0f, 0.0f, 1.0f));
+		transformation = rotate(transformation, cos((float)glfwGetTime())/2, vec3(0.0f, 0.0f, 1.0f*speed));
 		transformation = translate(transformation, vec3(0.0f, -0.5f - 0.1f * 2.0f, 0.1f));
 		transformation = scale(transformation, vec3(0.12,0.12,1.0));
 		Polygon3.transformation(transformation);
@@ -234,6 +235,22 @@ int main()
 		////Polygon5.transformation(transformation);
 		//Polygon5.draw(ourShader);
 
+		//Test::
+		std::vector<vec3> ve = {};
+		ve.push_back(vec3(0.5f, -0.5f, 0.0f));//down right
+		ve.push_back(vec3(-0.5f, -0.5f, 0.0f));//down left
+		ve.push_back(vec3(-0.5f, 0.5f, 0.0f));//top left
+		ve.push_back(vec3(0.5f, 0.5f, 0.0f));//top right
+		//MyPoly m = MyPoly(ve,0.5f);
+		//glm::mat4 t = mat4(1.0f);
+		//t = glm::rotate(t,30.0f,vec3(0.0f,1.0f,0.0f));
+		//m.transformation(t);
+		//m.Zscale(0.5);
+		//m.draw(ourShader);
+		
+
+
+		//
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}

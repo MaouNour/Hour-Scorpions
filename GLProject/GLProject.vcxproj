@@ -129,6 +129,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\OpenGL.SharedModule\src\glad.c" />
+    <ClCompile Include="MyPoly.cpp" />
+    <ClCompile Include="Polygon3d.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Polygon.cpp" />
   </ItemGroup>
