@@ -197,6 +197,7 @@ int main()
 		////////////////////////////////////////////////////////////////////////
 		transformation = mat4(1.0f);
 		float timeInHours = glfwGetTime() / 3600;
+		rotationSpeed = glm::radians(30.0f);
 		float HourAngle = rotationSpeed * timeInHours;
 		transformation = rotate(transformation, HourAngle, vec3(0.0f, 0.0f, -1.0f));
 		transformation = rotate(transformation, (float)3.14 / 4, vec3(0.0f, 0.0f, -1.0f));
