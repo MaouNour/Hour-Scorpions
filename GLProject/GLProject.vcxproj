@@ -129,10 +129,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\OpenGL.SharedModule\src\glad.c" />
+    <ClCompile Include="Helper.cpp" />
+    <ClCompile Include="Main.cpp" />
     <ClCompile Include="MyPoly.cpp" />
     <ClCompile Include="Polygon3d.cpp" />
-    <ClCompile Include="Main.cpp" />
     <ClCompile Include="Polygon.cpp" />
+    <ClCompile Include="PolygonTex.cpp" />
     <ClCompile Include="Shapes.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -141,8 +143,18 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="4.1.texture.fs" />
+    <None Include="4.1.texture.vs" />
+    <None Include="shaders\fs\accept-1-texture.fs" />
     <None Include="shaders\fs\L3.fs" />
+    <None Include="shaders\fs\texture.fs" />
+    <None Include="shaders\vs\bypass-texture.vs" />
     <None Include="shaders\vs\L3.vs" />
+    <None Include="shaders\vs\texture.vs" />
+    <None Include="texture.vs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="clock.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

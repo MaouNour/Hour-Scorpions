@@ -1,3 +1,4 @@
+#pragma once
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <vector>
@@ -13,7 +14,7 @@ public:
 		color = c;
 		model = glm::mat4(1.0f);
 
-		GLuint VBO, VAO;
+		//GLuint VBO, VAO;
 		glGenVertexArrays(1, &VAO);
 		glBindVertexArray(VAO);
 		glGenBuffers(1, &VBO);
@@ -23,7 +24,9 @@ public:
 		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_STATIC_DRAW);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
 		glEnableVertexAttribArray(0);
-		this->VAO = VAO;
+		/*this->VAO = VAO;
+		this->VBO = VBO;*/
+		glBindVertexArray(0);
 	}
 
 	void transformation(glm::mat4 t) {
@@ -37,18 +40,29 @@ public:
 		glBindVertexArray(this->VAO);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, vertices.size());
 	}
+	void drawc(Shader& shader)
+	{
+		glBindVertexArray(this->VAO);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, vertices.size());
+	}
 
 	void deleteBuffers() {
 		glDeleteVertexArrays(1, &VAO);
 		//glDeleteBuffers(1, &VBO);
 	}
-
-private:
+	std::vector<glm::vec3> getVertices() {
+		return this->vertices;
+	}
+protected:
 	glm::vec3 head;
 	std::vector<glm::vec3> vertices;
 	glm::vec3 color;
 	glm::mat4 model;
 	GLuint VAO;
-	Polygon();
+	GLuint VBO;
+	Polygon() {};
+
+private:
+	
 };
 

@@ -10,9 +10,11 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
 #include "MyPoly.cpp"
-//#include "Polygon.cpp"
+#include "Polygon.cpp"
 #include <math.h>
 #include "Shapes.cpp"
+#include <stb_image.h>
+#include "PolygonTex.cpp"
 
 
 using namespace glm;
@@ -24,19 +26,19 @@ vec3 cameraPos = vec3(0.0f, 0.0f, 4.0f);
 vec3 cameraFront = vec3(0.0f, 0.0f, -1.0f);
 vec3 cameraUp = vec3(0.0f, 1.0f, 0.0f);
 
-void processInput(GLFWwindow *window)
+void processInput(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
-    const float cameraSpeed = 0.02f; 
+	const float cameraSpeed = 0.02f;
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        cameraPos += cameraSpeed * cameraFront;
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        cameraPos -= cameraSpeed * cameraFront;
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        cameraPos -= normalize(cross(cameraFront, cameraUp)) * cameraSpeed;
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        cameraPos += normalize(cross(cameraFront, cameraUp)) * cameraSpeed;
+		cameraPos += cameraSpeed * cameraFront;
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		cameraPos -= cameraSpeed * cameraFront;
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		cameraPos -= normalize(cross(cameraFront, cameraUp)) * cameraSpeed;
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		cameraPos += normalize(cross(cameraFront, cameraUp)) * cameraSpeed;
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
 		cameraPos += cross(cameraFront, normalize(cross(cameraFront, cameraUp))) * cameraSpeed;
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
@@ -64,20 +66,25 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 
 	Shader ourShader("./shaders/vs/L3.vs", "./shaders/fs/L3.fs");
+	Shader texShader("./shaders/vs/texture.vs", "./shaders/fs/texture.fs");
+
 	std::vector<vec3> vertices0 = {};
 
-	/*vertices0.push_back(vec3(0.01f, -3.0f, 0.0f));
-	vertices0.push_back(vec3(-0.01f, -3.0f, 0.0f));
-	vertices0.push_back(vec3(-0.01f, 3.0f, 0.0f));
-	vertices0.push_back(vec3(0.01f, 3.0f, 0.0f));
-	Polygon axis = Polygon(vertices0, vec3(0.0f, 0.0f, 0.0f));*/
 
 	std::vector<vec3> vertices1 = {};
+	vertices1.push_back(vec3(0.5f, 0.5f, 0.0f));//top right
 	vertices1.push_back(vec3(0.5f, -0.5f, 0.0f));//down right
 	vertices1.push_back(vec3(-0.5f, -0.5f, 0.0f));//down left
 	vertices1.push_back(vec3(-0.5f, 0.5f, 0.0f));//top left
-	vertices1.push_back(vec3(0.5f, 0.5f, 0.0f));//top right
 	Polygon Polygon1 = Polygon(vertices1, vec3(1.0f, 0.0f, 0.0f));
+	std::vector<vec2> t = {};
+	t.push_back(vec2(1.0f, 0.0f)); // 1
+	t.push_back(vec2(1.0f, 1.0f)); // 2
+	t.push_back(vec2(0.0f, 1.0f)); // 3
+	t.push_back(vec2(0.0f, 0.0f)); // 4
+
+	const char* loc = "./ccc.png";
+	PolygonTex clock = PolygonTex(vertices1,loc,t);
 	/////////////////////////////////////////////////////
 	std::vector<vec3> arrow1 = {};
 	arrow1.push_back(vec3(0.01f, 0.0f, 0.0f));///
@@ -134,27 +141,17 @@ int main()
 	vertices3.push_back(vec3(0.5f, 0.5f, 0.0f));//top
 	Polygon Polygon3 = Polygon(vertices3, vec3(0.0f, 0.0f, 1.0f));
 
-	//std::vector<vec3> vertices4 = {};
-	//vertices4.push_back(vec3(-0.5f, -0.5f, 0.0f));
-	//vertices4.push_back(vec3(-0.5f, -0.5f, 1.0f));
-	//vertices4.push_back(vec3(0.0f, 0.366f, 1.0f));
-	//vertices4.push_back(vec3(0.0f, 0.366f, 0.0f));
-	//Polygon Polygon4 = Polygon(vertices4, vec3(1.0f, 1.0f, 0.0f));
+	
+	//MyPoly circle = MyPoly(Shapes::makeCircle(30, 0.5), 0.5);
+	Polygon circle = Polygon(Shapes::makeCircle(30, 0.5), vec3(1.0f, 0.0f, 0.0f));
 
-	//std::vector<vec3> vertices5 = {};
-	//vertices5.push_back(vec3(0.5f, -0.5f, 0.0f));
-	//vertices5.push_back(vec3(0.5f, -0.5f, 1.0f));
-	//vertices5.push_back(vec3(0.0f, 0.366f, 1.0f));
-	//vertices5.push_back(vec3(0.0f, 0.366f, 0.0f));
-	//Polygon Polygon5 = Polygon(vertices5, vec3(1.0f, 1.0f, 0.0f));
-	MyPoly circle = MyPoly(Shapes::makeCircle(30, 1), 0.5);
 
 	ourShader.use();
-	
+
 	mat4 projection = mat4(1.0f);
 	projection = perspective(radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
-	//projection = ortho(-(float)width, (float)width, -(float)height, (float)height, 0.01f, 100.0f);;
 	ourShader.setMat4("projection", projection);
+
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -167,14 +164,9 @@ int main()
 		//view = translate(view, vec3(0.0f, 0.0f, -4.0f));
 		view = lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 		ourShader.setMat4("view", view);
-		
-		mat4 transformation = mat4(1.0f);
-		//transformation = translate(transformation, vec3(0.0f, -0.5f, 0.0f));
-		//axis.transformation(transformation);
-		//axis.draw(ourShader);
-		//transformation = rotate(transformation, (float)glfwGetTime(), vec3(0.0f, 1.0f, 1.0f));
 
-		//////////////////////////////////////////////////////
+		mat4 transformation = mat4(1.0f);
+		
 		transformation = mat4(1.0f);
 		float rotationSpeed = glm::radians(6.0f);
 		float time = glfwGetTime();
@@ -182,21 +174,84 @@ int main()
 		transformation = rotate(transformation, angle, vec3(0.0f, 0.0f, -1.0f));
 
 		Arrow1.transformation(transformation);
-        Arrow11.transformation(transformation);
-		
+		Arrow11.transformation(transformation);
+
 		Arrow1.draw(ourShader);
 		Arrow11.draw(ourShader);
 		///////////////////////////////////////////////////////////////////
 		transformation = mat4(1.0f);
-		float timeInMin = glfwGetTime()/ 60;
+		float timeInMin = glfwGetTime() / 60;
 		float MinAngle = rotationSpeed * timeInMin;
 		transformation = rotate(transformation, MinAngle, vec3(0.0f, 0.0f, -1.0f));
 		transformation = rotate(transformation, (float)3.14 / 2, vec3(0.0f, 0.0f, -1.0f));
-		
+
 		Arrow2.transformation(transformation);
 		Arrow22.transformation(transformation);
 
-		glfwSwapBuffers(window); 
+		Arrow2.draw(ourShader);
+		Arrow22.draw(ourShader);
+		////////////////////////////////////////////////////////////////////////
+		transformation = mat4(1.0f);
+		float timeInHours = glfwGetTime() / 3600;
+		rotationSpeed = glm::radians(30.0f);
+		float HourAngle = rotationSpeed * timeInHours;
+		transformation = rotate(transformation, HourAngle, vec3(0.0f, 0.0f, -1.0f));
+		transformation = rotate(transformation, (float)3.14 / 4, vec3(0.0f, 0.0f, -1.0f));
+
+		Arrow3.transformation(transformation);
+		Arrow33.transformation(transformation);
+
+		Arrow3.draw(ourShader);
+		Arrow33.draw(ourShader);
+		/////////////////////////////////////////////////////
+		//transformation = mat4(1.0f);
+		//transformation = translate(transformation, vec3(0.0f, 0.1f, 0.0f));
+		//transformation = scale(transformation, vec3(0.8f, 0.8f, 1.0f));
+		//Polygon1.transformation(transformation);
+		//Polygon1.draw(ourShader);
+		/*transformation = mat4(1.0f);
+		transformation = translate(transformation, vec3(0.0f, 0.1f, 0.0f));
+		transformation = scale(transformation, vec3(0.8f, 0.8f, 1.0f));
+		clock.transformation(transformation);*/
+		texShader.use();
+		texShader.setMat4("projection", projection);	
+		texShader.setMat4("view", view);
+		clock.draw(texShader);
+		
+		ourShader.use();
+		rotationSpeed = glm::radians(90.0f);
+		transformation = mat4(1.0f);
+		transformation = rotate(transformation, cos((float)glfwGetTime() * rotationSpeed) / 2, vec3(0.0f, 0.0f, 1.0f));
+		transformation = translate(transformation, vec3(0.0f, -0.5f, 0.0f));
+		Polygon2.transformation(transformation);
+		Polygon2.draw(ourShader);
+
+		transformation = mat4(1.0f);
+		transformation = rotate(transformation, cos((float)glfwGetTime() * rotationSpeed) / 2, vec3(0.0f, 0.0f, 1.0f));
+		//transformation = translate(transformation, vec3(0.0f, -0.5f - 0.1f * 2.0f, 0.1f));
+		transformation = translate(transformation, vec3(0.0f, -0.5f - 0.1f * 2.0f + 0.135f, 0.1f));
+		//transformation = scale(transformation, vec3(0.12,0.12,1.0));
+		transformation = scale(transformation, vec3(0.18, 0.18, 1.0));
+		circle.transformation(transformation);
+		circle.draw(ourShader);
+
+
+		////Polygon4.transformation(transformation);
+		//Polygon4.draw(ourShader);
+
+		////Polygon5.transformation(transformation);
+		//Polygon5.draw(ourShader);
+
+		//Test::
+		std::vector<vec3> ve = {};
+		ve.push_back(vec3(0.5f, -0.5f, 0.0f));//down right
+		ve.push_back(vec3(-0.5f, -0.5f, 0.0f));//down left
+		ve.push_back(vec3(-0.5f, 0.5f, 0.0f));//top left
+		ve.push_back(vec3(0.5f, 0.5f, 0.0f));//top right
+		MyPoly m = MyPoly(ve,0.5f);
+		m.translate(vec3(0.0f,0.0f,-0.5001f));
+		m.draw(ourShader);
+		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
