@@ -32,18 +32,23 @@ public:
 	void transformation(glm::mat4 t) {
 		model = t;
 	}
-
-	void draw(Shader &shader)
+	void setDrawMode(GLenum drawingMode) {
+		this->drawingMode = drawingMode;
+	}
+	virtual void draw(Shader &shader)
 	{
+		shader.use();
 		shader.setVec3("objectColor", color);
 		shader.setMat4("model", model);
 		glBindVertexArray(this->VAO);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, vertices.size());
+		
+		glDrawArrays(drawingMode, 0, vertices.size());
 	}
-	void drawc(Shader& shader)
+	virtual ~Polygon() = default;
+	virtual void drawc(Shader& shader)
 	{
 		glBindVertexArray(this->VAO);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, vertices.size());
+		glDrawArrays(drawingMode, 0, vertices.size());
 	}
 
 	void deleteBuffers() {
@@ -60,6 +65,7 @@ protected:
 	glm::mat4 model;
 	GLuint VAO;
 	GLuint VBO;
+	GLenum drawingMode = GL_TRIANGLE_FAN;
 	Polygon() {};
 
 private:

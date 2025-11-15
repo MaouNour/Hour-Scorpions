@@ -6,10 +6,12 @@
 #include <glm/gtc/type_ptr.hpp>
 
 
-class MyPoly:public Polygon3d {
+class MyPoly :public Polygon3d {
 public:
-	MyPoly(std::vector<glm::vec3> vertices,float depth){
-		this->vertices = vertices;
+	MyPoly(std::vector<glm::vec3> v, float depth, ColorMode colorMode = COLOR,std::vector<glm::vec2> TexCoords = {}, std::vector<const char*> texVector = {},std::vector<glm::vec3> colorVector = {}) {
+		this->vertices = v;
+		this->tex = texVector;
+		this->colorVector = colorVector;
 		int currsize = vertices.size();
 		std::vector<int> faces = {};
 		std::vector<int> numberOfVerticesInFace = {};
@@ -29,14 +31,23 @@ public:
 		int size = vertices.size();
 		for (int i = 0; i < currsize; i++)
 		{
-			faces.push_back(i % size);
-			faces.push_back((i+1) % size);
-			faces.push_back((i+currsize+1) % size);
-			faces.push_back((i+currsize) % size);
+			int next = (i + 1) % currsize; // wraps around for the last vertex
+			faces.push_back(i);           // front i
+			faces.push_back(next);        // front next
+			faces.push_back(next + currsize);    // back next
+			faces.push_back(i + currsize);       // back i
 			numberOfVerticesInFace.push_back(4);
 		}
-		Polygon3d::init(vertices,numberOfVerticesInFace,faces);
+		if (!tex.empty() && !TexCoords.empty())
+		{
+			if(tex.size()>1)
+			Polygon3d::setTexture(TexCoords, tex);
+			else
+			Polygon3d::setTexture(TexCoords, tex.at(0));
+		}
+		Polygon3d::init(vertices,numberOfVerticesInFace,faces,colorMode);
 	}
+
 public:
 	void draw(Shader& shader) {
 		Polygon3d::draw(shader);

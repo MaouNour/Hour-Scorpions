@@ -143,15 +143,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="4.1.texture.fs" />
-    <None Include="4.1.texture.vs" />
-    <None Include="shaders\fs\accept-1-texture.fs" />
     <None Include="shaders\fs\L3.fs" />
     <None Include="shaders\fs\texture.fs" />
-    <None Include="shaders\vs\bypass-texture.vs" />
     <None Include="shaders\vs\L3.vs" />
     <None Include="shaders\vs\texture.vs" />
-    <None Include="texture.vs" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="clock.jpg" />

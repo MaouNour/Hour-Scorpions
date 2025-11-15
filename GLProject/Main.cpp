@@ -15,6 +15,7 @@
 #include "Shapes.cpp"
 #include <stb_image.h>
 #include "PolygonTex.cpp"
+#include "Helper.cpp"
 
 
 using namespace glm;
@@ -26,6 +27,25 @@ vec3 cameraPos = vec3(0.0f, 0.0f, 4.0f);
 vec3 cameraFront = vec3(0.0f, 0.0f, -1.0f);
 vec3 cameraUp = vec3(0.0f, 1.0f, 0.0f);
 
+
+
+static int seconds = 0;
+static int minutes = 0;
+static int hours = 0;
+bool checkSeconds();
+bool checkMinutes();
+bool checkHours();
+static std::vector<MyPoly> makeArrow(float length,float rectWidth= 0.02f,float triangleEdge= 0.03f,float depth=0.02f) {
+	MyPoly ArrowBody = MyPoly(Shapes::makeRect(rectWidth, length), depth);
+	ArrowBody.translate(vec3(0.0f, 0.0f, 0.34f));
+	ArrowBody.translate(vec3(0.0f, length / 2.0f, 0.0f));
+	ArrowBody.setCenter(vec3(0.0f, -length/2.0f, 0.0f));
+	MyPoly ArrowHead = MyPoly(Shapes::makeTriangle(triangleEdge), depth);
+	ArrowHead.translate(vec3(0.0f, 0.0f, 0.34f));
+	ArrowHead.translate(vec3(0.0f, length, 0.0f));
+	ArrowHead.setCenter(vec3(0.0f, -length, 0.0f));
+	return {ArrowBody,ArrowHead};
+}
 void processInput(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -64,197 +84,126 @@ int main()
 	glfwSwapInterval(1);
 
 	glEnable(GL_DEPTH_TEST);
-
 	Shader ourShader("./shaders/vs/L3.vs", "./shaders/fs/L3.fs");
 	Shader texShader("./shaders/vs/texture.vs", "./shaders/fs/texture.fs");
-
-	std::vector<vec3> vertices0 = {};
-
-
-	std::vector<vec3> vertices1 = {};
-	vertices1.push_back(vec3(0.5f, 0.5f, 0.0f));//top right
-	vertices1.push_back(vec3(0.5f, -0.5f, 0.0f));//down right
-	vertices1.push_back(vec3(-0.5f, -0.5f, 0.0f));//down left
-	vertices1.push_back(vec3(-0.5f, 0.5f, 0.0f));//top left
-	Polygon Polygon1 = Polygon(vertices1, vec3(1.0f, 0.0f, 0.0f));
-	std::vector<vec2> t = {};
-	t.push_back(vec2(1.0f, 0.0f)); // 1
-	t.push_back(vec2(1.0f, 1.0f)); // 2
-	t.push_back(vec2(0.0f, 1.0f)); // 3
-	t.push_back(vec2(0.0f, 0.0f)); // 4
-
-	const char* loc = "./ccc.png";
-	PolygonTex clock = PolygonTex(vertices1,loc,t);
-	/////////////////////////////////////////////////////
-	std::vector<vec3> arrow1 = {};
-	arrow1.push_back(vec3(0.01f, 0.0f, 0.0f));///
-	arrow1.push_back(vec3(0.01f, 0.4f, 0.0f));//
-	arrow1.push_back(vec3(-0.01f, 0.4f, 0.0f));//
-	arrow1.push_back(vec3(-0.01f, 0.0f, 0.0f));//
-	Polygon Arrow1 = Polygon(arrow1, vec3(0.0f, 1.0f, 0.0f));
-
-	std::vector<vec3> arrow11 = {};
-	arrow11.push_back(vec3(0.05f, 0.4f, 0.0f));//
-	arrow11.push_back(vec3(0.0f, 0.45f, 0.0f));//
-	arrow11.push_back(vec3(-0.05f, 0.4f, 0.0f));//
-	Polygon Arrow11 = Polygon(arrow11, vec3(0.0f, 1.0f, 0.0f));
-	////////////////////////////////////////////////////
-	std::vector<vec3> arrow2 = {};
-	arrow2.push_back(vec3(0.01f, 0.0f, 0.01f));///
-	arrow2.push_back(vec3(0.01f, 0.2f, 0.01f));//
-	arrow2.push_back(vec3(-0.01f, 0.2f, 0.01f));//
-	arrow2.push_back(vec3(-0.01f, 0.0f, 0.01f));//
-	Polygon Arrow2 = Polygon(arrow2, vec3(1.0f, 1.0f, 0.0f));
-
-	std::vector<vec3> arrow22 = {};
-	arrow22.push_back(vec3(0.05f, 0.2f, 0.001f));//
-	arrow22.push_back(vec3(0.0f, 0.25f, 0.001f));//
-	arrow22.push_back(vec3(-0.05f, 0.2f, 0.001f));//
-	Polygon Arrow22 = Polygon(arrow22, vec3(1.0f, 1.0f, 0.0f));
-	//////////////////////////////////////////////////////
-	std::vector<vec3> arrow3 = {};
-	arrow3.push_back(vec3(0.01f, 0.0f, 0.001f));///
-	arrow3.push_back(vec3(0.01f, 0.3f, 0.001f));//
-	arrow3.push_back(vec3(-0.01f, 0.3f, 0.001f));//
-	arrow3.push_back(vec3(-0.01f, 0.0f, 0.001f));//
-	Polygon Arrow3 = Polygon(arrow3, vec3(0.0f, 1.0f, 1.0f));
-
-	std::vector<vec3> arrow33 = {};
-	arrow33.push_back(vec3(0.05f, 0.3f, 0.01f));//
-	arrow33.push_back(vec3(0.0f, 0.35f, 0.01f));//
-	arrow33.push_back(vec3(-0.05f, 0.3f, 0.01f));//
-	Polygon Arrow33 = Polygon(arrow33, vec3(0.0f, 1.0f, 1.0f));
-	//////////////////////////////////////////////////////
-
-
-	std::vector<vec3> vertices2 = {};
-	vertices2.push_back(vec3(-0.01f, -0.2f, 0.0f));
-	vertices2.push_back(vec3(-0.01f, 0.2f, 0.0f));
-	vertices2.push_back(vec3(0.01f, 0.2f, 0.0f));
-	vertices2.push_back(vec3(0.01f, -0.2f, 0.0f));
-	Polygon Polygon2 = Polygon(vertices2, vec3(0.0f, 1.0f, 0.0f));
-
-	std::vector<vec3> vertices3 = {};
-	vertices3.push_back(vec3(0.5f, -0.5f, 0.0f));//right
-	vertices3.push_back(vec3(-0.5f, -0.5f, 0.0f));//left
-	vertices3.push_back(vec3(-0.5f, 0.5f, 0.0f));//top
-	vertices3.push_back(vec3(0.5f, 0.5f, 0.0f));//top
-	Polygon Polygon3 = Polygon(vertices3, vec3(0.0f, 0.0f, 1.0f));
-
-	
-	//MyPoly circle = MyPoly(Shapes::makeCircle(30, 0.5), 0.5);
-	Polygon circle = Polygon(Shapes::makeCircle(30, 0.5), vec3(1.0f, 0.0f, 0.0f));
-
-
-	ourShader.use();
 
 	mat4 projection = mat4(1.0f);
 	projection = perspective(radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
 	ourShader.setMat4("projection", projection);
-
-
+	
+	//INIT
+	MyPoly box = MyPoly(Shapes::makeRect(1.0f, 1.0f), 0.5f, TEXTURE, Shapes::squareTexture(), {"./container.jpg"});
+	MyPoly UpperClockShape = MyPoly(Shapes::makeCircle(30, 0.5f), 0.5);
+	PolygonTex clock = PolygonTex(Shapes::makeRect(0.7, 0.7), "./ccc.png", Shapes::squareTexture());
+	std::vector<MyPoly> temp= makeArrow(0.20f,0.01);
+	MyPoly secArrowBody = temp.at(0);
+	MyPoly secArrowHead = temp.at(1);
+	temp = makeArrow(0.15f,0.01);
+	MyPoly minArrowBody = temp.at(0);
+	MyPoly minArrowHead = temp.at(1);
+	temp = makeArrow(0.10f,0.015f,0.03f);
+	MyPoly hoursArrowBody = temp.at(0);
+	MyPoly hoursArrowHead = temp.at(1);
+	MyPoly centerCircle = MyPoly(Shapes::makeCircle(10, 0.015f), 0.02f);
+	centerCircle.translate(vec3(0.0f, 0.0f, 0.34f));
+	MyPoly pendulumBody = MyPoly(Shapes::makeRect(0.02f,0.7f),0.02f);
+	pendulumBody.setCenter(vec3(0.0f,0.35f,0.0f));
+	MyPoly pendulumHead = MyPoly(Shapes::makeCircle(30,0.1),0.02f);
+	pendulumHead.setCenter(vec3(0.0f, 0.7f, 0.0f));
 	while (!glfwWindowShouldClose(window))
 	{
 		processInput(window);
-
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 		mat4 view = mat4(1.0f);
 		//view = translate(view, vec3(0.0f, 0.0f, -4.0f));
 		view = lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-		ourShader.setMat4("view", view);
-
-		mat4 transformation = mat4(1.0f);
 		
-		transformation = mat4(1.0f);
-		float rotationSpeed = glm::radians(6.0f);
-		float time = glfwGetTime();
-		float angle = rotationSpeed * time;
-		transformation = rotate(transformation, angle, vec3(0.0f, 0.0f, -1.0f));
-
-		Arrow1.transformation(transformation);
-		Arrow11.transformation(transformation);
-
-		Arrow1.draw(ourShader);
-		Arrow11.draw(ourShader);
-		///////////////////////////////////////////////////////////////////
-		transformation = mat4(1.0f);
-		float timeInMin = glfwGetTime() / 60;
-		float MinAngle = rotationSpeed * timeInMin;
-		transformation = rotate(transformation, MinAngle, vec3(0.0f, 0.0f, -1.0f));
-		transformation = rotate(transformation, (float)3.14 / 2, vec3(0.0f, 0.0f, -1.0f));
-
-		Arrow2.transformation(transformation);
-		Arrow22.transformation(transformation);
-
-		Arrow2.draw(ourShader);
-		Arrow22.draw(ourShader);
-		////////////////////////////////////////////////////////////////////////
-		transformation = mat4(1.0f);
-		float timeInHours = glfwGetTime() / 3600;
-		rotationSpeed = glm::radians(30.0f);
-		float HourAngle = rotationSpeed * timeInHours;
-		transformation = rotate(transformation, HourAngle, vec3(0.0f, 0.0f, -1.0f));
-		transformation = rotate(transformation, (float)3.14 / 4, vec3(0.0f, 0.0f, -1.0f));
-
-		Arrow3.transformation(transformation);
-		Arrow33.transformation(transformation);
-
-		Arrow3.draw(ourShader);
-		Arrow33.draw(ourShader);
-		/////////////////////////////////////////////////////
-		//transformation = mat4(1.0f);
-		//transformation = translate(transformation, vec3(0.0f, 0.1f, 0.0f));
-		//transformation = scale(transformation, vec3(0.8f, 0.8f, 1.0f));
-		//Polygon1.transformation(transformation);
-		//Polygon1.draw(ourShader);
-		/*transformation = mat4(1.0f);
-		transformation = translate(transformation, vec3(0.0f, 0.1f, 0.0f));
-		transformation = scale(transformation, vec3(0.8f, 0.8f, 1.0f));
-		clock.transformation(transformation);*/
+		//##Textured Objects
 		texShader.use();
-		texShader.setMat4("projection", projection);	
+		texShader.setMat4("projection", projection);
 		texShader.setMat4("view", view);
+		box.resetTransformation();
+		box.scale(vec3(0.6f,1.0f,0.5f));
+		box.translate(vec3(0.0f, -0.75f, 0.0f));
+		box.draw(texShader);
+		mat4 transform = mat4(1.0);
+		transform = translate(transform,vec3(0.0f,0.0f,0.35f));
+		clock.transformation(transform);
 		clock.draw(texShader);
-		
+
+
+
+		//##Colored Objects
 		ourShader.use();
-		rotationSpeed = glm::radians(90.0f);
-		transformation = mat4(1.0f);
-		transformation = rotate(transformation, cos((float)glfwGetTime() * rotationSpeed) / 2, vec3(0.0f, 0.0f, 1.0f));
-		transformation = translate(transformation, vec3(0.0f, -0.5f, 0.0f));
-		Polygon2.transformation(transformation);
-		Polygon2.draw(ourShader);
+		ourShader.setMat4("projection", projection);
+		ourShader.setMat4("view", view);
+		UpperClockShape.resetTransformation();
+		UpperClockShape.scale(vec3(0.7,0.7,0.6));
+		UpperClockShape.translate(vec3(0.0f,0.0f,-0.15f));
+		UpperClockShape.setColor(vec3(0.5,0.5,0.5));
+		UpperClockShape.draw(ourShader);
+		centerCircle.draw(ourShader);
+		if(checkSeconds())
+		{
+			secArrowBody.rotate(6.0f, vec3(0.0f, 0.0f, -1.0f));
+			secArrowHead.rotate(6.0f, vec3(0.0f, 0.0f, -1.0f));
+		}
+		secArrowBody.draw(ourShader);
+		secArrowHead.draw(ourShader);
+		if (checkMinutes())
+		{
+			minArrowBody.rotate(6.0f, vec3(0.0f, 0.0f, -1.0f));
+			minArrowHead.rotate(6.0f, vec3(0.0f, 0.0f, -1.0f));
+		}
+		minArrowBody.draw(ourShader);
+		minArrowHead.draw(ourShader);
+		if (checkHours())
+		{
+			hoursArrowBody.rotate(30.0f, vec3(0.0f, 0.0f, -1.0f));
+			hoursArrowHead.rotate(30.0f, vec3(0.0f, 0.0f, -1.0f));
+		}
+		hoursArrowBody.draw(ourShader);
+		hoursArrowHead.draw(ourShader);
+		float rotationSpeed = glm::radians(180.0f);
+		pendulumBody.resetTransformation();
+		pendulumBody.translate(vec3(0.0f, -0.6f, 0.28f));
+		pendulumBody.rotateRad(cos((float)glfwGetTime() * rotationSpeed) / 2, vec3(0.0f, 0.0f, 1.0f));
+		pendulumBody.draw(ourShader);
 
-		transformation = mat4(1.0f);
-		transformation = rotate(transformation, cos((float)glfwGetTime() * rotationSpeed) / 2, vec3(0.0f, 0.0f, 1.0f));
-		//transformation = translate(transformation, vec3(0.0f, -0.5f - 0.1f * 2.0f, 0.1f));
-		transformation = translate(transformation, vec3(0.0f, -0.5f - 0.1f * 2.0f + 0.135f, 0.1f));
-		//transformation = scale(transformation, vec3(0.12,0.12,1.0));
-		transformation = scale(transformation, vec3(0.18, 0.18, 1.0));
-		circle.transformation(transformation);
-		circle.draw(ourShader);
+		pendulumHead.resetTransformation();
+		pendulumHead.translate(vec3(0.0f,-0.9f,0.28f));
+		pendulumHead.rotateRad(cos((float)glfwGetTime() * rotationSpeed) / 2, vec3(0.0f, 0.0f, 1.0f));
+		pendulumHead.draw(ourShader);
 
-
-		////Polygon4.transformation(transformation);
-		//Polygon4.draw(ourShader);
-
-		////Polygon5.transformation(transformation);
-		//Polygon5.draw(ourShader);
-
-		//Test::
-		std::vector<vec3> ve = {};
-		ve.push_back(vec3(0.5f, -0.5f, 0.0f));//down right
-		ve.push_back(vec3(-0.5f, -0.5f, 0.0f));//down left
-		ve.push_back(vec3(-0.5f, 0.5f, 0.0f));//top left
-		ve.push_back(vec3(0.5f, 0.5f, 0.0f));//top right
-		MyPoly m = MyPoly(ve,0.5f);
-		m.translate(vec3(0.0f,0.0f,-0.5001f));
-		m.draw(ourShader);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
 	glfwTerminate();
 	return 0;
+}
+bool checkSeconds() {
+	if ((int)glfwGetTime() > seconds)
+	{
+		seconds = (int)glfwGetTime();
+		return true;
+	}
+	return false;
+}
+bool checkMinutes() {
+	if ((int)glfwGetTime()/60 > minutes)
+	{
+		minutes = (int)glfwGetTime() / 60;
+		return true;
+	}
+	return false;
+}
+bool checkHours() {
+	if ((int)glfwGetTime() / 3600 > hours)
+	{
+		hours = (int)glfwGetTime() / 3600;
+		return true;
+	}
+	return false;
 }

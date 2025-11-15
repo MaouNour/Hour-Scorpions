@@ -47,19 +47,10 @@
     <None Include="shaders\vs\L3.vs">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="texture.vs" />
     <None Include="shaders\fs\texture.fs">
       <Filter>Source Files</Filter>
     </None>
     <None Include="shaders\vs\texture.vs">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="4.1.texture.vs" />
-    <None Include="4.1.texture.fs" />
-    <None Include="shaders\vs\bypass-texture.vs">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="shaders\fs\accept-1-texture.fs">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
