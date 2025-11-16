@@ -51,6 +51,7 @@ public:
 		glBindVertexArray(VAO);
 		glBindTexture(GL_TEXTURE_2D, texture);
 		int width, height, nrChannels;
+		//unsigned char* data = stbi_load(tex, &width, &height, &nrChannels, STBI_rgb_alpha);
 		unsigned char* data = stbi_load(tex, &width, &height, &nrChannels, 0);
 
 		if (!data) {

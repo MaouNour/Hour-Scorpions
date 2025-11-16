@@ -46,6 +46,9 @@ static std::vector<MyPoly> makeArrow(float length,float rectWidth= 0.02f,float t
 	ArrowHead.setCenter(vec3(0.0f, -length, 0.0f));
 	return {ArrowBody,ArrowHead};
 }
+glm::vec3 makeColorRGB(int r, int g, int b) {
+	return glm::vec3((float)r / 255, (float)g / 255, (float)b / 255);
+}
 void processInput(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -63,13 +66,14 @@ void processInput(GLFWwindow* window)
 		cameraPos += cross(cameraFront, normalize(cross(cameraFront, cameraUp))) * cameraSpeed;
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 		cameraPos -= cross(cameraFront, normalize(cross(cameraFront, cameraUp))) * cameraSpeed;
+	float rotationAngle = 0.004f;
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-		mat4 rotationMatrix = glm::rotate(mat4(1.0f), 0.001f, vec3(0.0f, 1.0f, 0.0f));
+		mat4 rotationMatrix = glm::rotate(mat4(1.0f), rotationAngle, vec3(0.0f, 1.0f, 0.0f));
 		vec4 rotatedVectorHomogeneous = rotationMatrix * vec4(cameraFront, 1.0f);
 		cameraFront = vec3(rotatedVectorHomogeneous);
 	}
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-		mat4 rotationMatrix = glm::rotate(mat4(1.0f), 0.001f, vec3(0.0f, -1.0f, 0.0f));
+		mat4 rotationMatrix = glm::rotate(mat4(1.0f), rotationAngle, vec3(0.0f, -1.0f, 0.0f));
 		vec4 rotatedVectorHomogeneous = rotationMatrix * vec4(cameraFront, 1.0f);
 		cameraFront = vec3(rotatedVectorHomogeneous);
 	}
@@ -90,11 +94,17 @@ int main()
 	mat4 projection = mat4(1.0f);
 	projection = perspective(radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
 	ourShader.setMat4("projection", projection);
-	
+
 	//INIT
-	MyPoly box = MyPoly(Shapes::makeRect(1.0f, 1.0f), 0.5f, TEXTURE, Shapes::squareTexture(), {"./container.jpg"});
-	MyPoly UpperClockShape = MyPoly(Shapes::makeCircle(30, 0.5f), 0.5);
-	PolygonTex clock = PolygonTex(Shapes::makeRect(0.7, 0.7), "./ccc.png", Shapes::squareTexture());
+	//NOTE THIS TEXTURE IS A HIGH COMPRESSED WHICH TAKES A WHILE TO LOAD
+	const char* boxImage = "./wood.png";// "./container.jpg" "./wood2.png"
+	const char* clockImage = "./clock-alpha.png";// "./container.jpg" "./wood2.png"
+
+	MyPoly box = MyPoly(Shapes::makeRect(1.0f, 1.0f), 0.5f, TEXTURE, Shapes::squareTexture(), {boxImage});
+	MyPoly UpperClockShape = MyPoly(Shapes::makeCircle(30, 0.5f), 0.55);
+	PolygonTex clock = PolygonTex(Shapes::makeCircle(30,0.35), clockImage, Shapes::makeCircleTextureUV(30));
+	//PolygonTex clock = PolygonTex(Shapes::makeRect(0.7, 0.7), "./clock-alpha.png", Shapes::squareTexture());
+	
 	std::vector<MyPoly> temp= makeArrow(0.20f,0.01);
 	MyPoly secArrowBody = temp.at(0);
 	MyPoly secArrowHead = temp.at(1);
@@ -104,12 +114,36 @@ int main()
 	temp = makeArrow(0.10f,0.015f,0.03f);
 	MyPoly hoursArrowBody = temp.at(0);
 	MyPoly hoursArrowHead = temp.at(1);
-	MyPoly centerCircle = MyPoly(Shapes::makeCircle(10, 0.015f), 0.02f);
+	MyPoly centerCircle = MyPoly(Shapes::makeCircle(10, 0.015f), 0.03f);
 	centerCircle.translate(vec3(0.0f, 0.0f, 0.34f));
-	MyPoly pendulumBody = MyPoly(Shapes::makeRect(0.02f,0.7f),0.02f);
-	pendulumBody.setCenter(vec3(0.0f,0.35f,0.0f));
-	MyPoly pendulumHead = MyPoly(Shapes::makeCircle(30,0.1),0.02f);
+	MyPoly pendulumBody = MyPoly(Shapes::makeRect(0.02f,0.8f),0.02f);
+	pendulumBody.setCenter(vec3(0.0f,0.4f,0.0f));
+	MyPoly pendulumHead = MyPoly(Shapes::makeCircle(30,0.1),0.03f);
 	pendulumHead.setCenter(vec3(0.0f, 0.7f, 0.0f));
+
+
+	//colors
+	vec3 goldColor = makeColorRGB(238, 205, 17);
+	vec3 metalColor = makeColorRGB(147, 141, 116);
+	vec3 blackColor = makeColorRGB(0, 0, 0);
+	vec3 greyColor = makeColorRGB(20, 20, 20);
+	vec3 lightGreyColor = makeColorRGB(200, 200, 200);
+
+	vec3 brownColor = makeColorRGB(137, 72, 30);
+	vec3 whiteColor = makeColorRGB(255, 255, 255);
+
+	//setColors:
+	pendulumBody.setColor(metalColor);
+	pendulumHead.setColor(goldColor);
+	UpperClockShape.setColor(greyColor);
+	secArrowBody.setColor(blackColor);
+	secArrowHead.setColor(blackColor);
+	minArrowBody.setColor(blackColor);
+	minArrowHead.setColor(blackColor);
+	hoursArrowBody.setColor(blackColor);
+	hoursArrowHead.setColor(blackColor);
+	centerCircle.setColor(lightGreyColor);
+
 	while (!glfwWindowShouldClose(window))
 	{
 		processInput(window);
@@ -128,7 +162,7 @@ int main()
 		box.translate(vec3(0.0f, -0.75f, 0.0f));
 		box.draw(texShader);
 		mat4 transform = mat4(1.0);
-		transform = translate(transform,vec3(0.0f,0.0f,0.35f));
+		transform = translate(transform,vec3(0.0f,0.0f,0.337f));
 		clock.transformation(transform);
 		clock.draw(texShader);
 
@@ -140,8 +174,8 @@ int main()
 		ourShader.setMat4("view", view);
 		UpperClockShape.resetTransformation();
 		UpperClockShape.scale(vec3(0.7,0.7,0.6));
-		UpperClockShape.translate(vec3(0.0f,0.0f,-0.15f));
-		UpperClockShape.setColor(vec3(0.5,0.5,0.5));
+		//UpperClockShape.translate(vec3(0.0f,0.0f,-0.15f));
+		UpperClockShape.translate(vec3(0.0f,0.0f,-0.18f));
 		UpperClockShape.draw(ourShader);
 		centerCircle.draw(ourShader);
 		if(checkSeconds())
@@ -167,7 +201,7 @@ int main()
 		hoursArrowHead.draw(ourShader);
 		float rotationSpeed = glm::radians(180.0f);
 		pendulumBody.resetTransformation();
-		pendulumBody.translate(vec3(0.0f, -0.6f, 0.28f));
+		pendulumBody.translate(vec3(0.0f, -0.64f, 0.28f));
 		pendulumBody.rotateRad(cos((float)glfwGetTime() * rotationSpeed) / 2, vec3(0.0f, 0.0f, 1.0f));
 		pendulumBody.draw(ourShader);
 

@@ -15,6 +15,17 @@ public:
 				glm::vec2(1.0f, 1.0f),
 		};
 	}
+	static std::vector<glm::vec2> makeCircleTextureUV(int numberOfPoints)
+	{
+		std::vector<glm::vec2> circleUV = {};
+		int step = 360 / numberOfPoints;
+		float pi = glm::pi<float>();
+		for (int i = 0; i < 360; i += step) {
+			float rad = i * pi / 180.0;
+			circleUV.push_back(glm::vec2((cos(rad) +1.0f)/2.0f, (sin(rad)+1.0)/2.0f));
+		}
+		return circleUV;
+	}
 	static std::vector<glm::vec3> makeCircle(int numberOfPoints,float r) {
 		std::vector<glm::vec3> circle = {};
 		int step = 360 / numberOfPoints;
